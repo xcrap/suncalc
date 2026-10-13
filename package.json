@@ -1,0 +1,26 @@
+{
+  "name": "wakasun",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"bun run dev:api\" \"bun run dev:web\"",
+    "dev:api": "bun --watch src/index.ts",
+    "dev:web": "bun run --filter wakasun-web dev",
+    "build": "bun run typecheck && bun run --filter wakasun-web build",
+    "typecheck": "tsc --noEmit && bun run --filter wakasun-web typecheck",
+    "start": "NODE_ENV=production bun src/index.ts",
+    "test": "bun test --timeout 30000 tests",
+    "owner:setup": "bun tools/setup-link.ts"
+  },
+  "dependencies": {
+    "hono": "^4.13.13"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3",
+    "concurrently": "^10.0.6",
+    "typescript": "^7.0.2"
+  }
+}
