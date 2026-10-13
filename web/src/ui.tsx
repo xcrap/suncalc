@@ -1,12 +1,10 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { Check, CircleAlert, LoaderCircle, Sunrise, X } from "lucide-react";
-import { dictionaries, type Copy, type Lang } from "./i18n";
+import { en, type Copy } from "./i18n";
 
 export type Toast = { message: string; error?: boolean; action?: () => void; label?: string };
 export const Ui = createContext({
-  t: dictionaries.en as Copy,
-  lang: "en" as Lang,
-  setLang: (_lang: Lang) => {},
+  t: en as Copy,
   notify: (_toast: Toast) => {},
 });
 export const useUi = () => useContext(Ui);
@@ -25,18 +23,6 @@ export function Logo() {
         <Sunrise size={19} strokeWidth={1.9} />
       </span>
       <span>{t.appName}</span>
-    </div>
-  );
-}
-export function Language() {
-  const { lang, setLang, t } = useUi();
-  return (
-    <div className="language" role="group" aria-label={t.language}>
-      {(["en", "pt"] as Lang[]).map((l) => (
-        <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l} lang={l}>
-          {l.toUpperCase()}
-        </button>
-      ))}
     </div>
   );
 }

@@ -8,13 +8,13 @@ import "./style.css";
 import { api, type Place, type PlaceInput, type User } from "./api";
 import { minutesClock } from "./format";
 import { terrainSun, useHorizon } from "./horizon";
-import { dictionaries, type Lang } from "./i18n";
+import { en } from "./i18n";
 import { SunMap, type View } from "./map";
 import { DateControls, HorizonCard, LocationCard, MoonCard, SunCard, SunTiles, TimeSlider } from "./panel";
 import { PlaceDialog, PlacesCard, SignInDialog } from "./places";
 import { Search } from "./search";
 import { dayTimes, localDate, localMinutes, shiftDate, sunPath, timeZoneAt, zonedInstant, type Point } from "./sun";
-import { Language, Logo, message, Spinner, ToastMessage, Ui, useUi, type Toast } from "./ui";
+import { Logo, message, Spinner, ToastMessage, Ui, useUi, type Toast } from "./ui";
 
 // Ponta Delgada, São Miguel.
 const HOME = { lat: 37.73952, lng: -25.66872, zoom: 11 };
@@ -53,33 +53,16 @@ function useMedia(query: string) {
 }
 
 function App() {
-  const [lang, setLangState] = useState<Lang>(() => {
-    try {
-      const stored = localStorage.getItem("wakasun-language");
-      if (stored === "pt" || stored === "en") return stored;
-    } catch {}
-    return navigator.language.toLowerCase().startsWith("pt") ? "pt" : "en";
-  });
   const [toast, setToast] = useState<Toast | null>(null);
-  const t = dictionaries[lang];
-  const setLang = (value: Lang) => {
-    try {
-      localStorage.setItem("wakasun-language", value);
-    } catch {}
-    setLangState(value);
-  };
-  useEffect(() => {
-    document.documentElement.lang = lang === "pt" ? "pt-PT" : "en";
-  }, [lang]);
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), toast.action ? 8000 : 4000);
     return () => clearTimeout(timer);
   }, [toast]);
   return (
-    <Ui.Provider value={{ t, lang, setLang, notify: setToast }}>
+    <Ui.Provider value={{ t: en, notify: setToast }}>
       <a className="skip-link" href="#planner">
-        {t.skip}
+        {en.skip}
       </a>
       <Planner />
       {toast && <ToastMessage toast={toast} onClose={() => setToast(null)} />}
@@ -90,7 +73,7 @@ function App() {
 type Sheet = { height: number; dragging: boolean };
 
 function Planner() {
-  const { t, lang, notify } = useUi();
+  const { t, notify } = useUi();
   const start = useMemo(readStart, []);
   const mobile = useMedia("(max-width: 760px)");
   const [map, setMap] = useState<MapLibre | null>(null);
@@ -167,7 +150,7 @@ function Planner() {
   }, [point.lat, point.lng, zoom, date, minutes]);
 
   // Name the spot once the pin settles.
-  const labelKey = `${point.lat.toFixed(4)},${point.lng.toFixed(4)},${lang}`;
+  const labelKey = `${point.lat.toFixed(4)},${point.lng.toFixed(4)}`;
   const isKnown = known && known.lat === point.lat && known.lng === point.lng;
   useEffect(() => {
     if (isKnown || label?.key === labelKey) return;
@@ -175,7 +158,7 @@ function Planner() {
     const timer = setTimeout(async () => {
       try {
         const result = await api<{ name: string | null; area: string | null }>(
-          `/api/geocode/reverse?lat=${point.lat}&lng=${point.lng}&lang=${lang}`,
+          `/api/geocode/reverse?lat=${point.lat}&lng=${point.lng}`,
           "GET",
           undefined,
           controller.signal,
@@ -383,7 +366,6 @@ function Planner() {
         {!mobile && (
           <header className="panel-header">
             <Logo />
-            <Language />
           </header>
         )}
         <div className="panel-body">
@@ -452,7 +434,6 @@ function Planner() {
           {mobile && (
             <footer className="panel-footer">
               <Logo />
-              <Language />
             </footer>
           )}
         </div>

@@ -7,7 +7,7 @@ A sunrise and sunset planner in the spirit of suncalc.org, built for the islands
 - **Real horizon**: a web worker reads open elevation tiles (Mapzen Terrarium on AWS Open Data) up to 160 km out and builds the skyline in every direction, with Earth's curvature and refraction. The planner then shows when direct sun first and last reaches the spot, and draws the sunrise and sunset sides of the skyline with today's and the solstices' sun paths. Trees and buildings are not in the data.
 - **Day details**: solar noon, day length and its change, golden and blue hours, dawn and dusk, sun altitude, direction and shadow length at any time, moonrise, moonset and phase.
 - **Places**: saved spots keep a name, note and optional date, show on the map, and filter by season. They are private to the owner account and shared between phone and computer.
-- English and European Portuguese. Works on phones: full-screen map with a bottom sheet, current location, and it installs to the home screen.
+- Works on phones: full-screen map with a bottom sheet, current location, and it installs to the home screen.
 
 ## Commands and ports
 

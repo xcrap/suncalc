@@ -19,7 +19,7 @@ export function Search({
   viewbox: () => string | undefined;
   onPick: (result: { lat: number; lng: number; name?: string }) => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [error, setError] = useState("");
@@ -50,7 +50,7 @@ export function Search({
     setBusy(true);
     setError("");
     try {
-      const params = new URLSearchParams({ q: text, lang });
+      const params = new URLSearchParams({ q: text });
       const box = viewbox();
       if (box) params.set("viewbox", box);
       const data = await api<{ results: SearchResult[] }>(`/api/geocode/search?${params}`);

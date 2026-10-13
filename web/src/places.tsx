@@ -36,7 +36,7 @@ export function PlacesCard({
   onEdit: (place: Place) => void;
   onDelete: (place: Place) => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   const [filter, setFilter] = useState<Filter>("all");
   const seasons = useMemo(() => new Map(places.map((p) => [p.id, placeSeason(p)])), [places]);
   const present = new Set(seasons.values());
@@ -93,7 +93,7 @@ export function PlacesCard({
                     <span className="place-text">
                       <strong>{place.name}</strong>
                       <small>
-                        {place.date ? `${dayLabel(place.date, lang)} · ${t[season as SeasonKey]}` : t.anyDate}
+                        {place.date ? `${dayLabel(place.date)} · ${t[season as SeasonKey]}` : t.anyDate}
                       </small>
                       {place.note && <span className="place-note">{place.note}</span>}
                     </span>

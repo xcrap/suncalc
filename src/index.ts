@@ -86,14 +86,14 @@ app.post("/api/auth/logout", logout);
 app.get("/api/geocode/search", async (c) => {
   const q = (c.req.query("q") || "").trim();
   if (q.length < 2 || q.length > 200) return c.json({ results: [] });
-  return c.json({ results: await search(q, c.req.query("lang"), c.req.query("viewbox")) });
+  return c.json({ results: await search(q, c.req.query("viewbox")) });
 });
 app.get("/api/geocode/reverse", async (c) => {
   const lat = Number(c.req.query("lat")),
     lng = Number(c.req.query("lng"));
   if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180)
     return c.json({ error: "invalid_request" }, 400);
-  return c.json(await reverse(lat, lng, c.req.query("lang")));
+  return c.json(await reverse(lat, lng));
 });
 
 // Saved places are private to the owner.

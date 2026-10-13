@@ -215,8 +215,7 @@ export const metersPerPixel = (lat: number, zoom: number) =>
   (40075016.686 * Math.cos(lat * rad)) / (512 * 2 ** zoom);
 
 const COMPASS = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
-const COMPASS_PT = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
-export function compass(azimuth: number, lang: "en" | "pt") {
+export function compass(azimuth: number) {
   const index = Math.round((((azimuth % 360) + 360) % 360) / 22.5) % 16;
-  return (lang === "pt" ? COMPASS_PT : COMPASS)[index];
+  return COMPASS[index];
 }

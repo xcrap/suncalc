@@ -414,35 +414,6 @@ textarea {
   color: #f3f5e1;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
 }
-.language {
-  display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-  border-radius: 9px;
-  background: var(--surface-2);
-}
-.language button {
-  min-width: 32px;
-  height: 26px;
-  padding: 0 7px;
-  border-radius: 7px;
-  color: var(--muted);
-  font-size: 0.6875rem;
-  font-weight: 620;
-  letter-spacing: 0.04em;
-  text-align: center;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-}
-.language button:hover {
-  color: var(--ink);
-}
-.language button[aria-pressed="true"] {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
-}
 
 /* Layout: planner panel beside a full-height map */
 .app {
@@ -1395,9 +1366,6 @@ dialog::backdrop {
   .tool {
     width: 44px;
     height: 44px;
-  }
-  .language button {
-    height: 32px;
   }
   .place-actions {
     opacity: 1;

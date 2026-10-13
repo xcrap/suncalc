@@ -46,15 +46,14 @@ function describe(name: string | undefined, address: Address = {}) {
   add(address.island || address.archipelago || address.country);
   return parts;
 }
-const language = (lang: string | undefined) => (lang === "pt" ? "pt-PT,pt,en" : "en,pt");
 
-export async function search(query: string, lang?: string, viewbox?: string) {
+export async function search(query: string, viewbox?: string) {
   const params = new URLSearchParams({
     format: "jsonv2",
     q: query,
     limit: "6",
     addressdetails: "1",
-    "accept-language": language(lang),
+    "accept-language": "en",
   });
   if (viewbox && /^-?[\d.]+(,-?[\d.]+){3}$/.test(viewbox)) params.set("viewbox", viewbox);
   const rows = (await fetchJson(`${ENDPOINT}/search?${params}`)) as {
@@ -76,7 +75,7 @@ export async function search(query: string, lang?: string, viewbox?: string) {
   });
 }
 
-export async function reverse(lat: number, lng: number, lang?: string) {
+export async function reverse(lat: number, lng: number) {
   const params = new URLSearchParams({
     format: "jsonv2",
     lat: lat.toFixed(4),
@@ -84,7 +83,7 @@ export async function reverse(lat: number, lng: number, lang?: string) {
     // Building level, so named viewpoints, beaches and peaks come back.
     zoom: "18",
     addressdetails: "1",
-    "accept-language": language(lang),
+    "accept-language": "en",
   });
   const row = (await fetchJson(`${ENDPOINT}/reverse?${params}`)) as {
     name?: string;

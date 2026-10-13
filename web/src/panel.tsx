@@ -36,7 +36,7 @@ export function LocationCard({
   onCopy: () => void;
   onSave: () => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   return (
     <section className="location" aria-label={t.selectedSpot}>
       <div className="location-text">
@@ -46,8 +46,8 @@ export function LocationCard({
           <span className="coords">
             {point.lat.toFixed(5)}, {point.lng.toFixed(5)}
           </span>
-          {elevation !== null && <span>{fill(t.elevation, { metres: number(Math.round(elevation), lang) })}</span>}
-          <span title={`${t.timeZone}: ${tz}`}>{zoneLabel(at, lang, tz)}</span>
+          {elevation !== null && <span>{fill(t.elevation, { metres: number(Math.round(elevation)) })}</span>}
+          <span title={`${t.timeZone}: ${tz}`}>{zoneLabel(at, tz)}</span>
         </p>
       </div>
       <div className="location-actions">
@@ -75,7 +75,7 @@ export function DateControls({
   tz: string;
   onDate: (date: string) => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   // The next equinoxes and solstices from today, for planning ahead.
   const marks = useMemo(() => {
     const year = splitDate(today).y;
@@ -97,7 +97,7 @@ export function DateControls({
           <ChevronLeft size={18} />
         </button>
         <label className="date-field">
-          <span aria-hidden="true">{dayLabel(date, lang, "weekday")}</span>
+          <span aria-hidden="true">{dayLabel(date, "weekday")}</span>
           <input
             type="date"
             aria-label={t.date}
@@ -124,11 +124,11 @@ export function DateControls({
             key={m.key}
             className={`chip chip-${m.key}`}
             aria-pressed={date === m.date}
-            title={`${t.seasonEvents[m.key]} · ${dayLabel(m.date, lang)}`}
+            title={`${t.seasonEvents[m.key]} · ${dayLabel(m.date)}`}
             onClick={() => onDate(m.date)}
           >
             {t[m.key]}
-            <small>{dayLabel(m.date, lang, "short")}</small>
+            <small>{dayLabel(m.date, "short")}</small>
           </button>
         ))}
       </div>
@@ -163,7 +163,7 @@ export function TimeSlider({
   onMinutes: (minutes: number) => void;
   onNow: () => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   // Night, twilight, blue and golden hour painted along the day.
   const track = useMemo(() => {
     const stops: string[] = [];
@@ -178,7 +178,7 @@ export function TimeSlider({
       <div className="time-head">
         <Clock size={16} aria-hidden="true" />
         <output className="time-value">{minutesClock(minutes)}</output>
-        <span className="muted">{zoneLabel(at, lang, tz)}</span>
+        <span className="muted">{zoneLabel(at, tz)}</span>
         <button className={`chip ${live ? "chip-live" : ""}`} aria-pressed={live} onClick={onNow}>
           {live && <i aria-hidden="true" />}
           {live ? t.live : t.now}
@@ -253,7 +253,7 @@ export function SunTiles({
   light: TerrainSun | null;
   onTime: (at: Date) => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   if (times.alwaysUp || times.alwaysDown)
     return <p className="muted">{times.alwaysUp ? t.alwaysUp : t.alwaysDown}</p>;
   const tile = (side: "sunrise" | "sunset") => {
@@ -267,10 +267,10 @@ export function SunTiles({
           {side === "sunrise" ? <Sunrise size={16} aria-hidden="true" /> : <Sunset size={16} aria-hidden="true" />}
           {t[side]}
         </span>
-        <strong>{clock(moment, lang, tz)}</strong>
+        <strong>{clock(moment, tz)}</strong>
         {position && (
           <small>
-            {degrees(position.azimuth, lang)} {compass(position.azimuth, lang)}
+            {degrees(position.azimuth)} {compass(position.azimuth)}
           </small>
         )}
         <span className="tile-terrain">
@@ -278,7 +278,7 @@ export function SunTiles({
           {!light
             ? "…"
             : delay >= 2 && edge
-              ? fill(side === "sunrise" ? t.directFrom : t.directUntil, { time: clock(edge, lang, tz) })
+              ? fill(side === "sunrise" ? t.directFrom : t.directUntil, { time: clock(edge, tz) })
               : t.clearHorizon}
         </span>
       </button>
@@ -307,12 +307,12 @@ export function SunCard({
   at: Date;
   onTime: (at: Date) => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   const noon = sunAt(point, times.solarNoon);
   const length = dayLength(times);
   const change = length - dayLength(previous);
   const now = sunAt(point, at);
-  const range = (a: Date | null, b: Date | null) => `${clock(a, lang, tz)}–${clock(b, lang, tz)}`;
+  const range = (a: Date | null, b: Date | null) => `${clock(a, tz)}–${clock(b, tz)}`;
   const select = (moment: Date | null) => (moment ? () => onTime(moment) : undefined);
   return (
     <section className="card" aria-labelledby="sun-title">
@@ -322,8 +322,8 @@ export function SunCard({
       <div className="rows">
         <Row
           label={t.solarNoon}
-          value={clock(times.solarNoon, lang, tz)}
-          detail={`${t.altitude} ${degrees(noon.altitude, lang)}`}
+          value={clock(times.solarNoon, tz)}
+          detail={`${t.altitude} ${degrees(noon.altitude)}`}
           onSelect={select(times.solarNoon)}
         />
         <Row
@@ -347,33 +347,33 @@ export function SunCard({
         />
         <Row
           label={`${t.dawn} · ${t.dusk}`}
-          value={`${clock(times.dawn, lang, tz)} · ${clock(times.dusk, lang, tz)}`}
+          value={`${clock(times.dawn, tz)} · ${clock(times.dusk, tz)}`}
         />
       </div>
       <div className="sun-now">
-        <h3>{fill(t.sunAt, { time: clock(at, lang, tz) })}</h3>
+        <h3>{fill(t.sunAt, { time: clock(at, tz) })}</h3>
         {now.altitude > -0.833 ? (
           <dl>
             <div>
               <dt>{t.altitude}</dt>
-              <dd>{degrees(now.altitude, lang, 1)}</dd>
+              <dd>{degrees(now.altitude, 1)}</dd>
             </div>
             <div>
               <dt>{t.direction}</dt>
               <dd>
-                {degrees(now.azimuth, lang)} {compass(now.azimuth, lang)}
+                {degrees(now.azimuth)} {compass(now.azimuth)}
               </dd>
             </div>
             <div>
               <dt>{t.shadow}</dt>
               <dd>
-                {now.altitude > 0.5 ? shadowLength(1 / Math.tan((now.altitude * Math.PI) / 180), lang) : "∞"}
+                {now.altitude > 0.5 ? shadowLength(1 / Math.tan((now.altitude * Math.PI) / 180)) : "∞"}
               </dd>
             </div>
           </dl>
         ) : (
           <p className="muted">
-            {t.belowHorizon} · {degrees(now.azimuth, lang)} {compass(now.azimuth, lang)}
+            {t.belowHorizon} · {degrees(now.azimuth)} {compass(now.azimuth)}
           </p>
         )}
       </div>
@@ -402,7 +402,7 @@ export function HorizonCard({
   loading: boolean;
   onTime: (at: Date) => void;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   const riseDelay = light ? minutesBetween(light.firstLight, times.sunrise) : 0;
   const setDelay = light ? minutesBetween(times.sunset, light.lastLight) : 0;
   return (
@@ -423,13 +423,13 @@ export function HorizonCard({
           <div className="rows">
             <Row
               label={t.firstLight}
-              value={clock(light.firstLight, lang, tz)}
+              value={clock(light.firstLight, tz)}
               detail={riseDelay > 0 ? fill(t.afterSunrise, { minutes: riseDelay }) : t.withSunrise}
               onSelect={light.firstLight ? () => onTime(light.firstLight!) : undefined}
             />
             <Row
               label={t.lastLight}
-              value={clock(light.lastLight, lang, tz)}
+              value={clock(light.lastLight, tz)}
               detail={setDelay > 0 ? fill(t.beforeSunset, { minutes: setDelay }) : t.withSunset}
               onSelect={light.lastLight ? () => onTime(light.lastLight!) : undefined}
             />
@@ -447,7 +447,7 @@ export function HorizonCard({
 }
 
 export function MoonCard({ point, date, tz }: { point: Point; date: string; tz: string }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   const moon = useMemo(() => moonDay(point, date, tz), [point.lat, point.lng, date, tz]);
   const phase = t.phases[Math.round(moon.light.phase * 8) % 8];
   return (
@@ -462,8 +462,8 @@ export function MoonCard({ point, date, tz }: { point: Point; date: string; tz: 
         </span>
       </header>
       <div className="rows">
-        <Row label={t.moonrise} value={clock(moon.rise, lang, tz)} />
-        <Row label={t.moonset} value={clock(moon.set, lang, tz)} />
+        <Row label={t.moonrise} value={clock(moon.rise, tz)} />
+        <Row label={t.moonset} value={clock(moon.set, tz)} />
       </div>
     </section>
   );

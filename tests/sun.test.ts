@@ -55,8 +55,8 @@ test("Ponta Delgada sunrise and sunset", () => {
   const rise = sunAt(pontaDelgada, summer.sunrise!).azimuth;
   expect(rise).toBeGreaterThan(55);
   expect(rise).toBeLessThan(65);
-  expect(compass(rise, "en")).toBe("ENE");
-  expect(compass(rise + 180, "pt")).toBe("OSO");
+  expect(compass(rise)).toBe("ENE");
+  expect(compass(rise + 180)).toBe("WSW");
 });
 
 function wall(angle: (azimuth: number) => number): HorizonResult {

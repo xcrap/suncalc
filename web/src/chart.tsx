@@ -40,7 +40,7 @@ export function HorizonChart({
   at: Date;
   edge: Date | null;
 }) {
-  const { t, lang } = useUi();
+  const { t } = useUi();
   const geometry = useMemo(() => {
     // Frame the azimuths the Sun uses through the year on this side.
     const solstices = seasonDates(splitDate(date).y, tz, point.lat).filter((s) => s.event === "solstice");
@@ -88,9 +88,9 @@ export function HorizonChart({
     const seasons = solstices.map((s) => ({ key: s.key, d: toPath(track(point, s.date, tz, side, top)) }));
     const ticks: { x: number; label: string }[] = [];
     for (let a = Math.ceil(a0 / 22.5) * 22.5; a <= a1; a += 22.5)
-      if (x(a) > 14 && x(a) < W - 14) ticks.push({ x: x(a), label: compass(a, lang) });
+      if (x(a) > 14 && x(a) < W - 14) ticks.push({ x: x(a), label: compass(a) });
     return { a0, a1, top, x, y, ground, seaPaths, seasons, ticks, today: toPath(track(point, date, tz, side, top)) };
-  }, [horizon, point.lat, point.lng, date, tz, side, lang]);
+  }, [horizon, point.lat, point.lng, date, tz, side]);
 
   const { x, y } = geometry;
   const sun = sunAt(point, at);
@@ -102,7 +102,7 @@ export function HorizonChart({
       <figcaption>
         <span>{label}</span>
         {mark && (
-          <small>{fill(t.skylineAt, { distance: distance(skylineDistance(horizon, mark.azimuth), lang) })}</small>
+          <small>{fill(t.skylineAt, { distance: distance(skylineDistance(horizon, mark.azimuth)) })}</small>
         )}
       </figcaption>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
@@ -123,7 +123,7 @@ export function HorizonChart({
               y={Math.max(12, y(mark.altitude) - 10)}
               textAnchor="middle"
             >
-              {clock(edge, lang, tz)}
+              {clock(edge, tz)}
             </text>
           </g>
         )}
