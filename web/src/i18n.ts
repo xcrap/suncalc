@@ -20,7 +20,7 @@ export const en = {
   locating: "Finding you…",
   locationUnavailable: "Your location is not available.",
   selectedSpot: "Selected spot",
-  pickHint: "Tap the map or drag the pin to choose a spot.",
+  pickHint: "Double-tap the map or drag the pin to choose a spot.",
   elevation: "{metres} m",
   copyLink: "Copy link",
   linkCopied: "Link copied",

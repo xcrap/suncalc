@@ -193,6 +193,8 @@ export function SunMap(props: Props) {
       center: props.initial.center,
       zoom: props.initial.zoom,
       attributionControl: false,
+      // A double click or tap sets the spot, so it no longer zooms.
+      doubleClickZoom: false,
       pitchWithRotate: false,
       touchPitch: false,
       maxPitch: 0,
@@ -204,7 +206,17 @@ export function SunMap(props: Props) {
       addLayers(map);
       setReady(true);
     });
-    map.on("click", (event) => latest.current.onPoint({ lat: event.lngLat.lat, lng: event.lngLat.lng }));
+    // Two clicks or taps close together move the spot, so a stray one never does.
+    // Phones do not reliably fire dblclick, so the pair is matched here.
+    let lastClick: { time: number; x: number; y: number } | null = null;
+    map.on("click", (event) => {
+      const time = event.originalEvent.timeStamp,
+        { x, y } = event.point;
+      if (lastClick && time - lastClick.time < 450 && Math.hypot(x - lastClick.x, y - lastClick.y) < 30) {
+        lastClick = null;
+        latest.current.onPoint({ lat: event.lngLat.lat, lng: event.lngLat.lng });
+      } else lastClick = { time, x, y };
+    });
     let frame = 0;
     // The dial keeps its size on screen, so it follows every zoom frame.
     map.on("zoom", () => {

@@ -297,8 +297,14 @@ function Planner() {
 
   // Mobile: the planner is a bottom sheet over a full-screen map.
   const [viewport, setViewport] = useState(() => innerHeight);
+  const [searching, setSearching] = useState(false);
   useEffect(() => {
-    const resize = () => setViewport(innerHeight);
+    // The keyboard shrinks the viewport while typing; the sheet keeps its size.
+    const typing = () =>
+      document.activeElement?.matches('input:not([type="range"], [type="date"]), textarea') ?? false;
+    const resize = () => {
+      if (!typing()) setViewport(innerHeight);
+    };
     addEventListener("resize", resize);
     return () => removeEventListener("resize", resize);
   }, []);
@@ -336,16 +342,18 @@ function Planner() {
   const search = (
     <Search
       viewbox={viewbox}
+      onActive={setSearching}
       onPick={(result) => {
         movePoint(result);
         if ("name" in result && result.name) setKnown({ lat: result.lat, lng: result.lng, name: result.name, area: (result as { area?: string }).area });
         flyTo(result, Math.max(map?.getZoom() ?? 13, 13));
+        if (mobile) setSheet((s) => ({ ...s, height: peek }));
       }}
     />
   );
 
   return (
-    <div className={`app ${mobile ? "is-mobile" : ""}`} style={{ "--sheet": `${mobile ? sheetHeight : 0}px` } as CSSProperties}>
+    <div className={`app ${mobile ? "is-mobile" : ""} ${mobile && searching ? "is-searching" : ""}`} style={{ "--sheet": `${mobile ? sheetHeight : 0}px` } as CSSProperties}>
       <aside
         id="planner"
         className={`panel ${sheet.dragging ? "dragging" : ""}`}

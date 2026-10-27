@@ -15,16 +15,22 @@ function coordinates(text: string) {
 export function Search({
   viewbox,
   onPick,
+  onActive,
 }: {
   viewbox: () => string | undefined;
   onPick: (result: { lat: number; lng: number; name?: string }) => void;
+  onActive?: (active: boolean) => void;
 }) {
   const { t } = useUi();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[] | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [focused, setFocused] = useState(false);
   const root = useRef<HTMLFormElement>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const active = focused || busy || !!results || !!error;
+  useEffect(() => onActive?.(active), [active]);
   useEffect(() => {
     if (!results && !error) return;
     const away = (event: PointerEvent) => {
@@ -43,10 +49,13 @@ export function Search({
     if (!text) return;
     const point = coordinates(text);
     if (point) {
+      input.current?.blur();
       onPick(point);
       setResults(null);
       return;
     }
+    // On a phone the keyboard would hide the results, so it closes here.
+    if (matchMedia("(pointer: coarse)").matches) input.current?.blur();
     setBusy(true);
     setError("");
     try {
@@ -75,12 +84,15 @@ export function Search({
       <label className="search-field">
         {busy ? <Spinner size={16} /> : <SearchIcon size={16} aria-hidden="true" />}
         <input
+          ref={input}
           type="search"
           enterKeyHint="search"
           aria-label={t.searchLabel}
           placeholder={t.searchPlaceholder}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
               setResults(null);
@@ -93,10 +105,13 @@ export function Search({
             type="button"
             className="icon-button"
             aria-label={t.close}
+            // Keep the field focused so the keyboard stays up for the next search.
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => {
               setQuery("");
               setResults(null);
               setError("");
+              input.current?.focus();
             }}
           >
             <X size={15} />
@@ -112,6 +127,7 @@ export function Search({
               type="button"
               key={`${result.lat},${result.lng}`}
               onClick={() => {
+                input.current?.blur();
                 onPick(result);
                 setResults(null);
                 setQuery(result.name);

@@ -1283,10 +1283,19 @@ dialog::backdrop {
     box-shadow:
       0 -10px 40px -12px rgb(18 20 16 / 0.35),
       0 -1px 0 rgb(18 20 16 / 0.06);
-    transition: height 0.32s var(--ease);
+    transition:
+      height 0.32s var(--ease),
+      transform 0.32s var(--ease);
   }
   .panel.dragging {
     transition: none;
+  }
+  /* Searching gives the screen to the field, the keyboard and the results. */
+  .is-searching .panel {
+    transform: translateY(calc(100% + 24px));
+  }
+  .is-searching .maplibregl-ctrl-bottom-right {
+    bottom: 0;
   }
   .sheet-handle {
     display: grid;
@@ -1319,6 +1328,11 @@ dialog::backdrop {
     border-color: transparent;
     border-radius: 14px;
     box-shadow: var(--shadow-md);
+  }
+  .map-search .search-results {
+    max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - 72px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .map-tools {
     top: calc(max(10px, env(safe-area-inset-top)) + 56px);
@@ -1359,6 +1373,12 @@ dialog::backdrop {
   }
 }
 @media (pointer: coarse) {
+  /* iOS zooms the page into any field smaller than 16px. */
+  input:where(:not([type="checkbox"], [type="radio"], [type="range"])),
+  textarea,
+  .search-field input {
+    font-size: 1rem;
+  }
   .icon-button {
     width: 40px;
     height: 40px;
